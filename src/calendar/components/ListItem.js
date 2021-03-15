@@ -212,7 +212,7 @@ class ListItem extends React.Component {
                 listItemStyles.day,
                 dayStyle,
                 disabledDayStyle,
-                { color: selectedDateMarkTextColor },
+                isDot && { color: selectedDateMarkTextColor },
               ]}
             >
               {day}
