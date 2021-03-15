@@ -55,6 +55,7 @@ class CalendarList extends Component {
             listItemStyle,
             selectedDateMarkColor,
             selectedDateMarkRangeColor,
+            selectedDateMarkTextColor,
             beyondDatesDisabled,
             beyondDatesDisabledTextColor,
             horizontal,
@@ -77,6 +78,7 @@ class CalendarList extends Component {
             listItemStyle={listItemStyle}
             selectedDateMarkColor={selectedDateMarkColor}
             selectedDateMarkRangeColor={selectedDateMarkRangeColor}
+            selectedDateMarkTextColor={selectedDateMarkTextColor}
             beyondDatesDisabled={beyondDatesDisabled}
             beyondDatesDisabledTextColor={beyondDatesDisabledTextColor}
             horizontal={horizontal}
@@ -429,6 +431,11 @@ CalendarList.propTypes = {
      */
     selectedDateMarkRangeColor: PropTypes.string,
 
+     /**
+     * Selected date mark text color for start date and end date. Default is 'magenta'.
+     */
+      selectedDateMarkTextColor: PropTypes.string,
+
     /**
      * When the date is out of minDate or maxDate, whether to disable the button. Default is true.
      */
@@ -495,6 +502,7 @@ CalendarList.defaultProps = {
     selectedDateMarkType: Constants.DEFAULT_DATE_MARK_TYPE.ELLIPSE,
     selectedDateMarkColor: 'magenta',
     selectedDateMarkRangeColor: 'skyblue',
+    selectedDateMarkTextColor: '#000',
     beyondDatesDisabled: true,
     beyondDatesDisabledTextColor: '#b9b9b9',
 };
