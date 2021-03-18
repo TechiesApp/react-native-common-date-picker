@@ -168,9 +168,12 @@ class ListItem extends React.Component {
       beyondDatesDisabledTextColor,
       selectedDateMarkType,
       selectedDateMarkTextColor,
+      startDate, 
+      endDate
     } = this.props;
 
     const currentDate = `${item.year}-${item.month}-${day}`;
+    const hasSelected = startDate === currentDate || endDate === currentDate;
     const markTypeStyles = this._getMarkTypeStyles(currentDate, days);
 
     let dayStyle = {};
@@ -191,6 +194,7 @@ class ListItem extends React.Component {
       disabled = beyondDatesDisabled;
     }
     const isDot = selectedDateMarkType === Constants.DEFAULT_DATE_MARK_TYPE.DOT;
+
     return day < 0 ? (
       <View key={index} style={{ width: text_width }} />
     ) : (
@@ -212,7 +216,7 @@ class ListItem extends React.Component {
                 listItemStyles.day,
                 dayStyle,
                 disabledDayStyle,
-                isDot && { color: selectedDateMarkTextColor },
+                hasSelected && { color: selectedDateMarkTextColor },
               ]}
             >
               {day}

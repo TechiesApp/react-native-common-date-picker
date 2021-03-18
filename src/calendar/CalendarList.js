@@ -8,11 +8,14 @@ import ListItem from "./components/ListItem";
 
 class CalendarList extends Component {
 
-    state = {
-        dataSource: [],
-        startDate: '',
-        endDate: '',
-    };
+    constructor (props) {
+        super(props);
+        this.state = {
+            dataSource: [],
+            startDate: props.startDate,
+            endDate: props.endDate,
+        };
+    }
 
     componentDidMount() {
         const {minDate, maxDate, firstDayOnWeeks} = this.props;
@@ -26,25 +29,49 @@ class CalendarList extends Component {
      * @param date A date string representing the date selected such as '2020-5-11'.
      */
     _selectDate = (date, index) => {
+        const { range } = this.props
+        console.log(range)
         const {startDate, endDate} = this.state;
-        if (startDate && endDate) {
-            this.setState({
-                startDate: date,
-                endDate: '',
-            });
-            return;
-        }
-        if (startDate) {
-            const isBigger = Constants.greaterThan(startDate, date);
-            this.setState({
-                startDate: isBigger ? date : startDate,
-                endDate: isBigger ? startDate : date,
-            });
+        if(range) {
+            if (startDate && endDate) {
+                this.setState({
+                    startDate: date,
+                    endDate: '',
+                });
+                return;
+            }
+            if (startDate) {
+                const isBigger = Constants.greaterThan(startDate, date);
+                this.setState({
+                    startDate: isBigger ? date : startDate,
+                    endDate: isBigger ? startDate : date,
+                });
+            } else {
+                this.setState({startDate: date});
+            }
         } else {
             this.setState({startDate: date});
         }
         const {onPressDate} = this.props;
-        onPressDate && typeof onPressDate === 'function' && onPressDate(Constants.toStandardStringWith(date), index);
+        let dates
+
+        if(!range) {
+            dates = [Constants.toStandardStringWith(date)];
+        } else {
+            dates = [Constants.toStandardStringWith(startDate), Constants.toStandardStringWith(date)];
+            dates.sort(function(a, b) {
+                var aa = new Date(a),
+                    bb = new Date(b);
+            
+                if (aa !== bb) {
+                    if (aa > bb) { return 1; }
+                    if (aa < bb) { return -1; }
+                }
+                return aa - bb;
+            })
+        }
+        
+        onPressDate && typeof onPressDate === 'function' && onPressDate(dates, index);
     };
 
     _renderItem = ({item, index}) => {
@@ -65,19 +92,20 @@ class CalendarList extends Component {
             arrowAlign,
             arrowColor,
             arrowSize,
+            range
         } = this.props;
         return <ListItem
             {...this.props}
             item={item}
             startDate={this.state.startDate}
-            endDate={this.state.endDate}
+            endDate={range ? this.state.endDate : null}
             minDate={Constants.validateDate(minDate)}
             maxDate={Constants.validateDate(maxDate)}
             selectDate={this._selectDate}
             headerTitleType={headerTitleType}
             listItemStyle={listItemStyle}
             selectedDateMarkColor={selectedDateMarkColor}
-            selectedDateMarkRangeColor={selectedDateMarkRangeColor}
+            selectedDateMarkRangeColor={range ? selectedDateMarkRangeColor : 'transparent'}
             selectedDateMarkTextColor={selectedDateMarkTextColor}
             beyondDatesDisabled={beyondDatesDisabled}
             beyondDatesDisabledTextColor={beyondDatesDisabledTextColor}
@@ -346,6 +374,11 @@ CalendarList.propTypes = {
     ]),
 
     /**
+     * Whether to allow range select.
+     */
+     range: PropTypes.bool,
+
+    /**
      * Whether to show weeks, default is true.
      */
     showWeeks: PropTypes.bool,
@@ -489,6 +522,7 @@ CalendarList.defaultProps = {
     },
     confirm: () => {
     },
+    range: true,
     cancelDisabled: false,
     confirmDisabled: false,
     minDate: Constants.DEFAULT_MIN_DATE,
